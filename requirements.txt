@@ -6,3 +6,8 @@ gunicorn
 pymongo
 imgurpython
 requests
+numpy
+matplotlib
+twstock
+pandas
+cloudinary 
