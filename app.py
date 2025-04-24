@@ -97,7 +97,8 @@ def handle_message(event: Event):
             return
 
         else:
-            response = model.generate_content(user_message) # 傳送使用者的問題給 Gemini
+            prompt = f"你是一個親切的繁體中文助手，請用繁體中文回答以下問題：{user_message}"
+            response = model.generate_content(prompt) # 傳送使用者的問題給 Gemini
             reply_text = response.text if response else "抱歉，我無法回答這個問題。"
 
         line_bot_api.reply_message(
