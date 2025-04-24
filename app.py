@@ -15,6 +15,10 @@ from linebot.models import (
 from linebot.exceptions import InvalidSignatureError
 import logging
 
+import google.generativeai as genai
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+model = genai.GenerativeModel("gemini-1.5-pro")
+
 # 加載 .env 文件中的變數
 load_dotenv()
 
@@ -93,7 +97,8 @@ def handle_message(event: Event):
             return
 
         else:
-            reply_text = ("你說了：" + user_message)
+            response = model.generate_content(user_message) # 傳送使用者的問題給 Gemini
+            reply_text = response.text if response else "抱歉，我無法回答這個問題。"
 
         line_bot_api.reply_message(
             event.reply_token,
