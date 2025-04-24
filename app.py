@@ -19,6 +19,20 @@ import google.generativeai as genai
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel("gemini-1.5-pro")
 
+import re
+
+def clean_gemini_text(text: str) -> str:
+    """
+    清理 Gemini 回傳的文字：
+    - 移除多餘空白行（含中間只有空格的行）
+    - 清除尾端的換行與空格，避免 LINE 手機版多顯示一行
+    """
+    if not text:
+        return ""
+    cleaned = re.sub(r'\n\s*\n', '\n', text)  # 多餘空行變成一個換行
+    cleaned = cleaned.rstrip()  # 移除尾端空格或換行
+    return cleaned
+
 # 加載 .env 文件中的變數
 load_dotenv()
 
@@ -99,7 +113,8 @@ def handle_message(event: Event):
         else:
             prompt = f"你是一個親切的繁體中文助手，請用繁體中文回答以下問題：{user_message}"
             response = model.generate_content(prompt) # 傳送使用者的問題給 Gemini
-            reply_text = response.text.replace("\n", " ") if response else "抱歉，我無法回答這個問題。"
+            raw_text = response.text if response else "抱歉，我無法回答這個問題。"
+            reply_text = clean_gemini_text(raw_text)
 
         line_bot_api.reply_message(
             event.reply_token,
