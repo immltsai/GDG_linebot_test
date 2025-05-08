@@ -42,8 +42,8 @@ import base64
 app = Flask(__name__)
 
 # LINE Bot 的 Channel Access Token 和 Channel Secret
-line_bot_api = LineBotApi('YOUR_CHANNEL_ACCESS_TOKEN')
-handler = WebhookHandler('YOUR_CHANNEL_SECRET')
+line_bot_api = LineBotApi('LINE_TOKEN')
+handler = WebhookHandler('LINE_SECRET')
 
 # 用戶資料儲存
 USERS_DATA_FILE = 'users_data.json'
