@@ -215,7 +215,7 @@ def handle_message(event):
                 reply = "請確認已完整輸入身高與體重。"
 
     else:
-        reply = "歡迎使用健康管理教練！\n請輸入：\n- 身高170公分\n- 體重60公斤\n- 年齡25歲\n- 性別男\n- 快走30分鐘\n- 健康狀態"
+        reply = "歡迎使用健康管理教練！\n請分別輸入以下資料：\n範例 \n- 身高170公分\n- 體重60公斤\n- 年齡25歲\n- 性別男"
 
     line_bot_api.reply_message(reply_token, TextSendMessage(text=reply))
 
