@@ -96,7 +96,10 @@ def generate_gemini_advice(history, user_message):
         raw_text = response.text if response else "很抱歉，暫時無法提供建議。"
         return clean_gemini_text(raw_text)
     except Exception as e:
-        return f"系統忙碌中，請稍後再試～ ({e})"
+        error_message = str(e)
+        if "429" in error_message:
+            return "系統目前使用人數過多，請稍後再試（配額已達上限）。"
+        return f"系統忙碌中，請稍後再試～"
 
 # 設置一個路由來處理 LINE Webhook 的回調請求
 @app.route("/", methods=['POST'])
