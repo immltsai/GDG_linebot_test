@@ -15,6 +15,7 @@ from linebot.models import (
 import firebase_admin
 from firebase_admin import credentials, initialize_app, firestore
 import google.generativeai as genai
+import re
 
 # === 環境變數載入 ===
 load_dotenv()
@@ -70,7 +71,20 @@ def calculate_bmi(weight, height_cm):
     height_m = height_cm / 100
     return round(weight / (height_m ** 2), 2)
 
-# === Gemini AI 產生建議 ===
+# === 清理 Gemini 回傳文字的函式 ===
+def clean_gemini_text(text: str) -> str:
+    """
+    清理 Gemini 回傳的文字：
+    - 移除多餘空白行（含中間只有空格的行）
+    - 清除尾端的換行與空格，避免 LINE 手機版多顯示一行
+    """
+    if not text:
+        return ""
+    cleaned = re.sub(r'\n\s*\n', '\n', text)  # 多餘空行變成一個換行
+    cleaned = cleaned.rstrip()  # 移除尾端空格或換行
+    return cleaned
+
+# === Gemini AI 產生建議函式整合清理功能 ===
 def generate_gemini_advice(history, user_message):
     try:
         prompt = (
@@ -79,7 +93,8 @@ def generate_gemini_advice(history, user_message):
             "請用親切且鼓勵的語氣，使用繁體中文，給予個人化健康建議。"
         )
         response = gemini_model.generate_content(prompt)
-        return response.text.strip() if response else "很抱歉，暫時無法提供建議。"
+        raw_text = response.text if response else "很抱歉，暫時無法提供建議。"
+        return clean_gemini_text(raw_text)
     except Exception as e:
         return f"系統忙碌中，請稍後再試～ ({e})"
 
@@ -217,13 +232,13 @@ def handle_message(event):
                 
                 # 整理資料給 Gemini
                 user_profile_info = f"使用者的 BMI 為 {bmi} ({bmi_status})。"
-                prompt_context = {
+                prompt_context_1 = {
                     "最近 7 天運動紀錄": history_records,
                     "個人健康狀態": user_profile_info
                 }        
 
                 # Gemini AI 給個人化建議
-                gemini_advice = generate_gemini_advice(prompt_context, "請根據我的健康狀態和運動紀錄提供運動建議")
+                gemini_advice = generate_gemini_advice(prompt_context_1, "請根據我的健康狀態和運動紀錄提供運動建議")
 
                 reply = (
                     f"你的 BMI 為 {bmi}。\n\n"
@@ -258,12 +273,12 @@ def handle_message(event):
                 reply = "這週還沒有紀錄任何運動，加油！💪"
             else:
                 activity_details = "\n".join([f"- {act}: {mins} 分鐘" for act, mins in activity_summary.items()])
-                prompt_context = {
+                prompt_context_2 = {
                     "最近 7 天總運動時間": f"{total_minutes} 分鐘",
                     "總消耗熱量": f"{total_calories} 大卡",
                     "活動分佈": activity_summary
                 }
-                gemini_advice = generate_gemini_advice(prompt_context, "請給我一份週報告的健康建議")
+                gemini_advice = generate_gemini_advice(prompt_context_2, "請給我一份週報告的健康建議")
     
                 reply = (
                     f"📅【本週運動報告】\n"
@@ -299,12 +314,12 @@ def handle_message(event):
                 reply = "這週還沒有紀錄任何運動，加油！💪"
             else:
                 activity_details = "\n".join([f"- {act}: {mins} 分鐘" for act, mins in activity_summary.items()])
-                prompt_context = {
+                prompt_context_3 = {
                     "最近 30 天總運動時間": f"{total_minutes} 分鐘",
                     "總消耗熱量": f"{total_calories} 大卡",
                     "活動分佈": activity_summary
                 }
-                gemini_advice = generate_gemini_advice(prompt_context, "請給我一份週報告的健康建議")
+                gemini_advice = generate_gemini_advice(prompt_context_3, "請給我一份週報告的健康建議")
     
                 reply = (
                     f"📅【本月運動報告】\n"
