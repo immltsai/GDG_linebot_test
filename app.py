@@ -230,7 +230,16 @@ def handle_message(event):
 
             if height and weight:
                 bmi = calculate_bmi(weight, height)
-
+                bmi_status = ""
+                if bmi < 18.5:
+                    bmi_status = "體重過輕"
+                elif 18.5 <= bmi < 24:
+                    bmi_status = "體重正常"
+                elif 24 <= bmi < 27:
+                    bmi_status = "體重稍重"
+                else:
+                    bmi_status = "體重過重"
+                    
                 # 最近 7 天運動歷史
                 history_records = []
                 for i in range(7):
@@ -252,7 +261,7 @@ def handle_message(event):
 
                 reply = (
                     f"你的 BMI 為 {bmi}。\n\n"
-                    f"💡 Gemini 建議：\n{gemini_advice}"
+                    f"💡 運動建議：\n{gemini_advice}"
                 )
             else:
                 reply = "請確認已完整輸入身高與體重。"
@@ -295,11 +304,11 @@ def handle_message(event):
                     f"總運動時間：{total_minutes} 分鐘\n"
                     f"總消耗熱量：{round(total_calories, 2)} 大卡\n"
                     f"活動分佈：\n{activity_details}\n\n"
-                    f"💡 Gemini 建議：\n{gemini_advice}"
+                    f"💡 運動建議：\n{gemini_advice}"
                 )
 
     # === 月報告 + Gemini 建議 ===
-    elif user_message == "週報告":
+    elif user_message == "月報告":
         if not user_doc.exists:
             reply = "請先設定個人資料。"
         else:
@@ -336,7 +345,7 @@ def handle_message(event):
                     f"總運動時間：{total_minutes} 分鐘\n"
                     f"總消耗熱量：{round(total_calories, 2)} 大卡\n"
                     f"活動分佈：\n{activity_details}\n\n"
-                    f"💡 Gemini 建議：\n{gemini_advice}"
+                    f"💡 運動建議：\n{gemini_advice}"
                 )
 
     # === 幫助 ===
