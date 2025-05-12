@@ -146,13 +146,13 @@ def handle_message(event):
 
     # === 註冊資料 ===
     elif user_message == "註冊資料":
-    reply = (
-        "請分別輸入以下個人資料，範例如下：\n"
-        "身高170公分\n"
-        "體重60公斤\n"
-        "年齡25歲\n"
-        "性別男"
-    )
+        reply = (
+            "請分別輸入以下個人資料，範例如下：\n"
+            "身高170公分\n"
+            "體重60公斤\n"
+            "年齡25歲\n"
+            "性別男"
+        )
     
     # === 運動紀錄 ===
     elif any(activity in user_message for activity in MET_VALUES):
@@ -234,109 +234,109 @@ def handle_message(event):
 
     # === 週報告 + Gemini 建議 ===
     elif user_message == "週報告":
-    if not user_doc.exists:
-        reply = "請先設定個人資料。"
-    else:
-        total_calories = 0
-        total_minutes = 0
-        activity_summary = {}
-
-        for i in range(7):
-            date_str = (datetime.now() - timedelta(days=i)).strftime("%Y-%m-%d")
-            activity_doc = user_ref.collection("activities").document(date_str).get()
-            if activity_doc.exists:
-                records = activity_doc.to_dict().get("records", [])
-                for record in records:
-                    activity = record["activity"]
-                    minutes = record["minutes"]
-                    calories = record["calories"]
-                    total_calories += calories
-                    total_minutes += minutes
-                    activity_summary[activity] = activity_summary.get(activity, 0) + minutes
-
-        if total_minutes == 0:
-            reply = "這週還沒有紀錄任何運動，加油！💪"
+        if not user_doc.exists:
+            reply = "請先設定個人資料。"
         else:
-            activity_details = "\n".join([f"- {act}: {mins} 分鐘" for act, mins in activity_summary.items()])
-            prompt_context = {
-                "最近 7 天總運動時間": f"{total_minutes} 分鐘",
-                "總消耗熱量": f"{total_calories} 大卡",
-                "活動分佈": activity_summary
-            }
-            gemini_advice = generate_gemini_advice(prompt_context, "請給我一份週報告的健康建議")
-
-            reply = (
-                f"📅【本週運動報告】\n"
-                f"總運動時間：{total_minutes} 分鐘\n"
-                f"總消耗熱量：{round(total_calories, 2)} 大卡\n"
-                f"活動分佈：\n{activity_details}\n\n"
-                f"💡 Gemini 建議：\n{gemini_advice}"
-            )
+            total_calories = 0
+            total_minutes = 0
+            activity_summary = {}
+    
+            for i in range(7):
+                date_str = (datetime.now() - timedelta(days=i)).strftime("%Y-%m-%d")
+                activity_doc = user_ref.collection("activities").document(date_str).get()
+                if activity_doc.exists:
+                    records = activity_doc.to_dict().get("records", [])
+                    for record in records:
+                        activity = record["activity"]
+                        minutes = record["minutes"]
+                        calories = record["calories"]
+                        total_calories += calories
+                        total_minutes += minutes
+                        activity_summary[activity] = activity_summary.get(activity, 0) + minutes
+    
+            if total_minutes == 0:
+                reply = "這週還沒有紀錄任何運動，加油！💪"
+            else:
+                activity_details = "\n".join([f"- {act}: {mins} 分鐘" for act, mins in activity_summary.items()])
+                prompt_context = {
+                    "最近 7 天總運動時間": f"{total_minutes} 分鐘",
+                    "總消耗熱量": f"{total_calories} 大卡",
+                    "活動分佈": activity_summary
+                }
+                gemini_advice = generate_gemini_advice(prompt_context, "請給我一份週報告的健康建議")
+    
+                reply = (
+                    f"📅【本週運動報告】\n"
+                    f"總運動時間：{total_minutes} 分鐘\n"
+                    f"總消耗熱量：{round(total_calories, 2)} 大卡\n"
+                    f"活動分佈：\n{activity_details}\n\n"
+                    f"💡 Gemini 建議：\n{gemini_advice}"
+                )
 
     # === 月報告 + Gemini 建議 ===
     elif user_message == "週報告":
-    if not user_doc.exists:
-        reply = "請先設定個人資料。"
-    else:
-        total_calories = 0
-        total_minutes = 0
-        activity_summary = {}
-
-        for i in range(30):
-            date_str = (datetime.now() - timedelta(days=i)).strftime("%Y-%m-%d")
-            activity_doc = user_ref.collection("activities").document(date_str).get()
-            if activity_doc.exists:
-                records = activity_doc.to_dict().get("records", [])
-                for record in records:
-                    activity = record["activity"]
-                    minutes = record["minutes"]
-                    calories = record["calories"]
-                    total_calories += calories
-                    total_minutes += minutes
-                    activity_summary[activity] = activity_summary.get(activity, 0) + minutes
-
-        if total_minutes == 0:
-            reply = "這週還沒有紀錄任何運動，加油！💪"
+        if not user_doc.exists:
+            reply = "請先設定個人資料。"
         else:
-            activity_details = "\n".join([f"- {act}: {mins} 分鐘" for act, mins in activity_summary.items()])
-            prompt_context = {
-                "最近 30 天總運動時間": f"{total_minutes} 分鐘",
-                "總消耗熱量": f"{total_calories} 大卡",
-                "活動分佈": activity_summary
-            }
-            gemini_advice = generate_gemini_advice(prompt_context, "請給我一份週報告的健康建議")
-
-            reply = (
-                f"📅【本月運動報告】\n"
-                f"總運動時間：{total_minutes} 分鐘\n"
-                f"總消耗熱量：{round(total_calories, 2)} 大卡\n"
-                f"活動分佈：\n{activity_details}\n\n"
-                f"💡 Gemini 建議：\n{gemini_advice}"
-            )
+            total_calories = 0
+            total_minutes = 0
+            activity_summary = {}
+    
+            for i in range(30):
+                date_str = (datetime.now() - timedelta(days=i)).strftime("%Y-%m-%d")
+                activity_doc = user_ref.collection("activities").document(date_str).get()
+                if activity_doc.exists:
+                    records = activity_doc.to_dict().get("records", [])
+                    for record in records:
+                        activity = record["activity"]
+                        minutes = record["minutes"]
+                        calories = record["calories"]
+                        total_calories += calories
+                        total_minutes += minutes
+                        activity_summary[activity] = activity_summary.get(activity, 0) + minutes
+    
+            if total_minutes == 0:
+                reply = "這週還沒有紀錄任何運動，加油！💪"
+            else:
+                activity_details = "\n".join([f"- {act}: {mins} 分鐘" for act, mins in activity_summary.items()])
+                prompt_context = {
+                    "最近 30 天總運動時間": f"{total_minutes} 分鐘",
+                    "總消耗熱量": f"{total_calories} 大卡",
+                    "活動分佈": activity_summary
+                }
+                gemini_advice = generate_gemini_advice(prompt_context, "請給我一份週報告的健康建議")
+    
+                reply = (
+                    f"📅【本月運動報告】\n"
+                    f"總運動時間：{total_minutes} 分鐘\n"
+                    f"總消耗熱量：{round(total_calories, 2)} 大卡\n"
+                    f"活動分佈：\n{activity_details}\n\n"
+                    f"💡 Gemini 建議：\n{gemini_advice}"
+                )
 
     # === 幫助 ===
     elif user_message == "幫助":
-    reply = (
-        "📖【健康管理教練 使用說明】\n\n"
-        "指令需要逐條輸入哦～\n"
-        "📝 個人資料設定範例：\n"
-        "  - 身高170公分\n"
-        "  - 體重60公斤\n"
-        "  - 年齡25歲\n"
-        "  - 性別男\n\n"
-        "🏃‍♂️ 運動紀錄範例：\n"
-        "  - 快走30分鐘\n"
-        "  - 慢跑20分鐘\n"
-        "  - 游泳45分鐘\n\n"
-        "目前有的運動包含走路、快走、慢跑、騎腳踏車、游泳、跳繩、瑜珈"
-        "📅 報告功能：\n"
-        "  - 週報告（統計最近 7 天運動）\n"
-        "  - 月報告（統計最近 30 天運動）\n\n"
-        "💡 其他指令：\n"
-        "  - 註冊資料（查看個人資料設定範例）\n"
-        "  - 幫助（顯示本說明）\n\n"
-        "✨ 請試著輸入範例看看吧！一起邁向更健康的生活～💪"
-    )
+        reply = (
+            "📖【健康管理教練 使用說明】\n\n"
+            "指令需要逐條輸入哦～\n"
+            "📝 個人資料設定範例：\n"
+            "  - 身高170公分\n"
+            "  - 體重60公斤\n"
+            "  - 年齡25歲\n"
+            "  - 性別男\n\n"
+            "🏃‍♂️ 運動紀錄範例：\n"
+            "  - 快走30分鐘\n"
+            "  - 慢跑20分鐘\n"
+            "  - 游泳45分鐘\n\n"
+            "目前有的運動包含走路、快走、慢跑、騎腳踏車、游泳、跳繩、瑜珈"
+            "📅 報告功能：\n"
+            "  - 週報告（統計最近 7 天運動）\n"
+            "  - 月報告（統計最近 30 天運動）\n\n"
+            "💡 其他指令：\n"
+            "  - 註冊資料（查看個人資料設定範例）\n"
+            "  - 幫助（顯示本說明）\n\n"
+            "✨ 請試著輸入範例看看吧！一起邁向更健康的生活～💪"
+        )
 
     else:
         reply = "請輸入有效的指令，例如：註冊資料、運動建議等。"
