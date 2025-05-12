@@ -44,7 +44,7 @@ handler = WebhookHandler(line_secret)
 
 # === Gemini AI 初始化 ===
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-gemini_model = genai.GenerativeModel("gemini-1.5-pro")
+gemini_model = genai.GenerativeModel("gemini-1.5-flash")
 
 # 創建 Flask 應用
 app = Flask(__name__)
@@ -131,7 +131,7 @@ def handle_message(event):
         try:
             height = int(user_message.replace("身高", "").replace("公分", "").strip())
             user_ref.set({"height": height}, merge=True)
-            reply = f"已紀錄身高：{height} 公分"
+            reply = f"已記錄身高：{height} 公分"
         except:
             reply = "請輸入正確的身高，例如：身高170公分"
 
@@ -139,7 +139,7 @@ def handle_message(event):
         try:
             weight = float(user_message.replace("體重", "").replace("公斤", "").strip())
             user_ref.set({"weight": weight}, merge=True)
-            reply = f"已紀錄體重：{weight} 公斤"
+            reply = f"已記錄體重：{weight} 公斤"
         except:
             reply = "請輸入正確的體重，例如：體重60公斤"
 
@@ -147,7 +147,7 @@ def handle_message(event):
         try:
             age = int(user_message.replace("年齡", "").replace("歲", "").strip())
             user_ref.set({"age": age}, merge=True)
-            reply = f"已紀錄年齡：{age} 歲"
+            reply = f"已記錄年齡：{age} 歲"
         except:
             reply = "請輸入正確的年齡，例如：年齡25歲"
 
@@ -155,7 +155,7 @@ def handle_message(event):
         gender = user_message.replace("性別", "").strip()
         if gender in ["男", "女"]:
             user_ref.set({"gender": gender}, merge=True)
-            reply = f"已紀錄性別：{gender}"
+            reply = f"已記錄性別：{gender}"
         else:
             reply = "請輸入正確的性別，例如：性別男"
 
@@ -169,10 +169,10 @@ def handle_message(event):
             "性別男"
         )
     
-    # === 運動紀錄 ===
-    elif user_message == "運動紀錄":
+    # === 運動記錄 ===
+    elif user_message == "運動記錄":
         reply = (
-            "運動類型包含走路、快走、慢跑、騎腳踏車、游泳、跳繩、瑜珈\n"
+            "運動類型包含走路、快走、慢跑、騎腳踏車、游泳、跳繩、瑜珈。\n\n"
             "請分別輸入各種運動，範例如下：\n"
             "快走30分鐘\n"
             "慢跑20分鐘\n"
@@ -212,7 +212,7 @@ def handle_message(event):
 
                             activity_ref.set({"records": record})
 
-                            reply = f"已紀錄：{activity} {minutes} 分鐘，消耗約 {round(calories, 2)} 大卡。"
+                            reply = f"已記錄：{activity} {minutes} 分鐘，消耗約 {round(calories, 2)} 大卡。"
                         except:
                             reply = "請輸入正確格式，例如：快走30分鐘"
                         break
@@ -289,7 +289,7 @@ def handle_message(event):
                         activity_summary[activity] = activity_summary.get(activity, 0) + minutes
     
             if total_minutes == 0:
-                reply = "這週還沒有紀錄任何運動，加油！💪"
+                reply = "這週還沒有記錄任何運動，加油！💪"
             else:
                 activity_details = "\n".join([f"- {act}: {mins} 分鐘" for act, mins in activity_summary.items()])
                 prompt_context_2 = {
@@ -330,7 +330,7 @@ def handle_message(event):
                         activity_summary[activity] = activity_summary.get(activity, 0) + minutes
     
             if total_minutes == 0:
-                reply = "這週還沒有紀錄任何運動，加油！💪"
+                reply = "這月還沒有記錄任何運動，加油！💪"
             else:
                 activity_details = "\n".join([f"- {act}: {mins} 分鐘" for act, mins in activity_summary.items()])
                 prompt_context_3 = {
@@ -351,18 +351,18 @@ def handle_message(event):
     # === 幫助 ===
     elif user_message == "幫助":
         reply = (
-            "📖【健康管理教練 使用說明】\n\n"
-            "指令需要逐條輸入哦～\n"
+            "📖【卡教練CalCoach 使用說明】\n\n"
+            "小提醒: 指令需要逐條輸入哦～\n\n"
             "📝 個人資料設定範例：\n"
             "  - 身高170公分\n"
             "  - 體重60公斤\n"
             "  - 年齡25歲\n"
             "  - 性別男\n\n"
-            "🏃‍♂️ 運動紀錄範例：\n"
+            "目前有的運動包含走路、快走、慢跑、騎腳踏車、游泳、跳繩、瑜珈。\n"
+            "🏃‍♂️ 運動記錄範例：\n"
             "  - 快走30分鐘\n"
             "  - 慢跑20分鐘\n"
             "  - 游泳45分鐘\n\n"
-            "目前有的運動包含走路、快走、慢跑、騎腳踏車、游泳、跳繩、瑜珈"
             "📅 報告功能：\n"
             "  - 週報告（統計最近 7 天運動）\n"
             "  - 月報告（統計最近 30 天運動）\n\n"
@@ -373,7 +373,7 @@ def handle_message(event):
         )
 
     else:
-        reply = "請輸入有效的指令，例如：註冊資料、運動建議等。"
+        reply = "請輸入有效的指令，例如：註冊資料、運動建議等等。"
 
     line_bot_api.reply_message(reply_token, TextSendMessage(text=reply))
 
