@@ -143,6 +143,16 @@ def handle_message(event):
         else:
             reply = "請輸入正確的性別，例如：性別男"
 
+    # === 註冊資料 ===
+    elif user_message == "註冊資料":
+    reply = (
+        "請分別輸入以下個人資料，範例如下：\n"
+        "身高170公分\n"
+        "體重60公斤\n"
+        "年齡25歲\n"
+        "性別男"
+    )
+    
     # === 運動紀錄 ===
     elif any(activity in user_message for activity in MET_VALUES):
         if not user_doc.exists:
@@ -222,7 +232,7 @@ def handle_message(event):
                 reply = "請確認已完整輸入身高與體重。"
 
     else:
-        reply = "歡迎使用健康管理教練！\n請分別輸入以下資料：\n範例 \n- 身高170公分\n- 體重60公斤\n- 年齡25歲\n- 性別男"
+        reply = "請輸入有效的指令，例如：註冊資料、運動建議等。"
 
     line_bot_api.reply_message(reply_token, TextSendMessage(text=reply))
 
