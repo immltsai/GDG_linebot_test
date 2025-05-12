@@ -170,6 +170,16 @@ def handle_message(event):
         )
     
     # === 運動紀錄 ===
+    elif user_message == "運動紀錄":
+        reply = (
+            "運動類型包含走路、快走、慢跑、騎腳踏車、游泳、跳繩、瑜珈\n"
+            "請分別輸入各種運動，範例如下：\n"
+            "快走30分鐘\n"
+            "慢跑20分鐘\n"
+            "游泳45分鐘"
+        )
+        
+    # === 運動資料儲存 ===    
     elif any(activity in user_message for activity in MET_VALUES):
         if not user_doc.exists:
             reply = "請先設定身高與體重。"
