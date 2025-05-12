@@ -183,8 +183,8 @@ def handle_message(event):
                 else:
                     reply = "未找到對應的運動類型。"
 
-    # === 健康狀態查詢 + Gemini 提醒 ===
-    elif user_message == "健康狀態":
+    # === 運動建議 + Gemini 提醒 ===
+    elif user_message == "運動建議":
         if not user_doc.exists:
             reply = "請先輸入身高和體重資料。"
         else:
@@ -203,9 +203,16 @@ def handle_message(event):
                     if activity_doc.exists:
                         records = activity_doc.to_dict().get("records", [])
                         history_records.extend(records)
+                
+                # 整理資料給 Gemini
+                user_profile_info = f"使用者的 BMI 為 {bmi} ({bmi_status})。"
+                prompt_context = {
+                    "最近 7 天運動紀錄": history_records,
+                    "個人健康狀態": user_profile_info
+                }        
 
                 # Gemini AI 給個人化建議
-                gemini_advice = generate_gemini_advice(history_records, "給我健康建議")
+                gemini_advice = generate_gemini_advice(prompt_context, "請根據我的健康狀態和運動紀錄提供運動建議")
 
                 reply = (
                     f"你的 BMI 為 {bmi}。\n\n"
