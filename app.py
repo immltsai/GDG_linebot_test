@@ -280,7 +280,7 @@ def handle_message(event):
                 }        
 
                 # Gemini AI 給個人化建議
-                gemini_advice = generate_gemini_advice(prompt_context_1, "請根據我的健康狀態和運動紀錄提供運動建議")
+                gemini_advice = generate_gemini_advice(prompt_context_1, "請根據我的健康狀態和運動紀錄提供運動建議，包含目標、建議活動與飲食控制，大約300字")
 
                 reply = (
                     f"你的 BMI 為 {bmi}。\n\n"
@@ -320,7 +320,7 @@ def handle_message(event):
                     "總消耗熱量": f"{total_calories} 大卡",
                     "活動分佈": activity_summary
                 }
-                gemini_advice = generate_gemini_advice(prompt_context_2, "請給我一份週報告的健康建議")
+                gemini_advice = generate_gemini_advice(prompt_context_2, "請給我一份週報告的運動及健康建議，包含未達標時的改善方式或是已達標的維持方式，大約300字")
     
                 reply = (
                     f"📅【本週運動報告】\n"
@@ -361,7 +361,7 @@ def handle_message(event):
                     "總消耗熱量": f"{total_calories} 大卡",
                     "活動分佈": activity_summary
                 }
-                gemini_advice = generate_gemini_advice(prompt_context_3, "請給我一份週報告的健康建議")
+                gemini_advice = generate_gemini_advice(prompt_context_3, "請給我一份月報告的健康建議，包含習慣養成、個人化成就與效率優化建議，大約500字")
     
                 reply = (
                     f"📅【本月運動報告】\n"
