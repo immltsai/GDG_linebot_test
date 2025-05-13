@@ -75,13 +75,33 @@ def calculate_bmi(weight, height_cm):
 def clean_gemini_text(text: str) -> str:
     """
     清理 Gemini 回傳的文字：
-    - 移除多餘空白行（含中間只有空格的行）
-    - 清除尾端的換行與空格，避免 LINE 手機版多顯示一行
+    - 移除 Markdown 粗體 ** **、斜體 * *、底線 __ __
+    - 移除引用符號 >
+    - 保留清單符號 -、* 和數字編號
+    - 移除多餘空白行，保留段落間一個空行
+    - 去除每行首尾空白
+    - 移除整體結尾多餘空白與換行
     """
     if not text:
         return ""
-    cleaned = re.sub(r'\n\s*\n', '\n', text)  # 多餘空行變成一個換行
-    cleaned = cleaned.rstrip()  # 移除尾端空格或換行
+    
+    # 1. 移除 Markdown 標記
+    cleaned = re.sub(r'\*\*(.*?)\*\*', r'\1', text)  # 移除 **粗體**
+    cleaned = re.sub(r'\*(.*?)\*', r'\1', cleaned)  # 移除 *斜體*
+    cleaned = re.sub(r'__(.*?)__', r'\1', cleaned)  # 移除 __底線__
+
+    # 2. 移除引用符號 >
+    cleaned = re.sub(r'^>\s?', '', cleaned, flags=re.MULTILINE)
+
+    # 3. 移除多餘空白行，只保留一個空行分段
+    cleaned = re.sub(r'\n\s*\n+', '\n\n', cleaned)
+
+    # 4. 去除每行開頭和結尾的空白
+    cleaned_lines = [line.strip() for line in cleaned.splitlines()]
+
+    # 5. 重組文字並移除整體結尾多餘空白與換行
+    cleaned = '\n'.join(cleaned_lines).rstrip()
+
     return cleaned
 
 # === Gemini AI 產生建議函式整合清理功能 ===
